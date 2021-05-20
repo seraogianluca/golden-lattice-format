@@ -1,33 +1,30 @@
 #include "include/golden_ratio.hpp"
 
-GoldenRatio GoldenRatio::operator+(const GoldenRatio other) {
-    GoldenRatio z;
+goldice goldice::operator+(const goldice other) {
+    goldice z;
     z.a = a + other.a;
     z.b = b + other.b;
     return z;
 }
 
-GoldenRatio GoldenRatio::operator-(const GoldenRatio other) {
-    GoldenRatio z;
+goldice goldice::operator-(const goldice other) {
+    goldice z;
     z.a = a - other.a;
     z.b = b - other.b;
     return z;
 }
 
-GoldenRatio GoldenRatio::operator*(const GoldenRatio other) {
+goldice goldice::operator*(const goldice other) {
     // Can be optimized
-    GoldenRatio z;
-    if ((a == COMPLEX_INFINITY && b == COMPLEX_INFINITY &&
-    other.a == 0 && other.b = 0) || (a == 0 && b == 0 && 
-    other.a == COMPLEX_INFINITY && other.b == COMPLEX_INFINITY)) {
-        z.a = INDETERMINATE;
-        z.b = INDETERMINATE;
+    goldice z;
+    if ((complexInfinity && other.a == 0 && other.b == 0) || (a == 0 && b == 0 && other.complexInfinity)) {
+        z.indeterminate = true;
+        z.complexInfinity = false;
         return z;
     }
-    if ((a == COMPLEX_INFINITY && b = COMPLEX_INFINITY) ||
-    other.a == COMPLEX_INFINITY && other.b = COMPLEX_INFINITY) {
-        z.a = COMPLEX_INFINITY;
-        z.b = COMPLEX_INFINITY;
+    if (complexInfinity || other.complexInfinity) {
+        z.complexInfinity = true;
+        z.indeterminate = false;
         return z;
     }
     z.a = a * other.a + b * other.b;
@@ -35,28 +32,33 @@ GoldenRatio GoldenRatio::operator*(const GoldenRatio other) {
     return z;
 }
 
-GoldenRatio reciprocal() {
-    GoldenRatio z;
-    if (a == COMPLEX_INFINITY && b == COMPLEX_INFINITY) {
+goldice goldice::reciprocal() {
+    goldice z;
+    if (complexInfinity) {
         z.a = 0;
         z.b = 0;
         return z;
     }
     if (a == 0 && b == 0) {
-        z.a = COMPLEX_INFINITY;
-        z.b = COMPLEX_INFINITY;
+        z.complexInfinity = true;
+        z.indeterminate = false;
         return z;
     }
-    z.a = (a + b)/(a^2 + a*b-b^2);
-    z.b = -b/(a^2 + a*b-b^2);
+    z.a = (a + b)/((a^2)+(a*b)-(b^2));
+    z.b = -b/((a^2)+(a*b)-(b^2));
     return z;
 }
 
-GoldenRatio GoldenRatio::operator/(const GoldenRatio other) {
-    GoldenRatio z;
-    return z = this * other.reciprocal();
+goldice goldice::operator/(goldice other) {
+    goldice z;
+    z = this->operator*(other.reciprocal());
+    return z;
 }
 
-ostream& operator<<(ostream& out, const GoldenRatio& other) {
-    return out << other.a << " - " << other.b;
+double goldice::toDouble() {
+    return a + (b*phi);
+}
+
+ostream& operator<<(ostream& out, const goldice& other) {
+    return out << static_cast<int>(other.a) << " + phi(" << static_cast<int>(other.b) << ")";
 }
